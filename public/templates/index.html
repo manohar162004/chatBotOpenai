@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatBot Web App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    <h1>ChatBot Web App</h1>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button id="send-btn">Send</button>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chat-box");
+        const userInput = document.getElementById("user-input");
+        const sendBtn = document.getElementById("send-btn");
+
+        sendBtn.addEventListener("click", async () => {
+            const userMessage = userInput.value;
+            chatBox.innerHTML += `<div class="user-message">${userMessage}</div>`;
+            userInput.value = "";
+
+            const response = await fetch("/get_response", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `user_message=${userMessage}`
+            });
+
+            const data = await response.json();
+            const chatbotResponse = data.response;
+            chatBox.innerHTML += `<div class="chatbot-message">${chatbotResponse}</div>`;
+        });
+    </script>
+</body>
+</html>
